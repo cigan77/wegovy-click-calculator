@@ -294,7 +294,7 @@
       <!-- COLONNA SINISTRA: INPUT -->
       <section class="card">
         <h2>Impostazioni</h2>
-        <small>Seleziona la penna, inserisci i click per dose etichetta, il prezzo e la dose settimanale desiderata.</small>
+        <small>Seleziona la penna, inserisci il prezzo e la dose settimanale desiderata.</small>
 
         <div class="warning">
           <div class="warning-emoji">⚠️</div>
@@ -309,13 +309,7 @@
           <div class="col">
             <label for="pen-select">Tipo di penna</label>
             <select id="pen-select"></select>
-            <div class="helper">Dose etichetta 1 volta/settimana.</div>
-          </div>
-
-          <div class="col">
-            <label for="clicks-full">Click per dose etichetta</label>
-            <input id="clicks-full" type="number" min="1" step="1" value="74" />
-            <div class="helper">Numero di “scatti” per la dose piena indicata sulla penna.</div>
+            <div class="helper">Dose etichetta 1 volta/settimana. Click dose etichetta fissati a 74.</div>
           </div>
         </div>
 
@@ -404,7 +398,6 @@
     ];
 
     const penSelect   = document.getElementById('pen-select');
-    const clicksInput = document.getElementById('clicks-full');
     const priceInput  = document.getElementById('price');
     const targetInput = document.getElementById('target-dose');
 
@@ -442,7 +435,6 @@
 
     function resetDefaults() {
       penSelect.value = pens[0].id;
-      clicksInput.value = 80;
       priceInput.value = 200;
       targetInput.value = 0.25;
       recalc();
@@ -452,18 +444,17 @@
       const pen = pens.find(p => p.id === penSelect.value);
       if (!pen) return;
 
-      const clicksFull = parseFloat(clicksInput.value);
       const price      = parseFloat(priceInput.value);
       const targetDose = parseFloat(targetInput.value);
 
-      if (!clicksFull || !targetDose || targetDose <= 0) {
+      if (!targetDose || targetDose <= 0) {
         doseInfo.textContent     = 'Compila i campi per vedere i risultati.';
         clickInfo.textContent    = '';
         durationInfo.textContent = '';
         costInfo.textContent     = '';
 
         statClicks.textContent       = '–';
-        statClicksDetail.textContent = 'Inserisci dose e click per etichetta.';
+        statClicksDetail.textContent = 'Inserisci la dose settimanale.';
         statWeeks.textContent        = '–';
         statWeeksDetail.textContent  = '';
         statWeekCost.textContent     = '–';
@@ -471,6 +462,9 @@
         statTotalCost.textContent    = '–';
         return;
       }
+
+      // click per dose etichetta fissati a 74
+      const clicksFull = 74;
 
       // mg per click in base alla dose etichetta
       const mgPerClick = pen.labelDoseMg / clicksFull;
@@ -499,7 +493,7 @@
         `Con una dose settimanale di ${format(targetDose, 2)} mg ottieni ≈ ${format(dosesPerPenAtTarget, 2)} settimane per penna.`;
 
       clickInfo.textContent =
-        `Stima: ${format(mgPerClick, 4)} mg per click. ` +
+        `Stima: ${format(mgPerClick, 4)} mg per click (74 click per dose etichetta). ` +
         `Per ${format(targetDose, 2)} mg/settimana servono ≈ ${format(clicksForDose, 1)} click ` +
         `(arrotondato: ${clicksRounded} click).`;
 
@@ -512,7 +506,8 @@
 
       // STAT BOX
       statClicks.textContent = `${clicksRounded} click`;
-      statClicksDetail.textContent = `Calcolati da ${format(clicksForDose, 1)} click teorici (≈${format(mgPerClick, 4)} mg/click).`;
+      statClicksDetail.textContent =
+        `Calcolati da ${format(clicksForDose, 1)} click teorici (≈${format(mgPerClick, 4)} mg/click, 74 click/dose etichetta).`;
 
       statWeeks.textContent = `${format(weeks, 1)} sett.`;
       statWeeksDetail.textContent = `${format(dosesPerPenAtTarget, 2)} dosi/settimana dalla penna.`;
@@ -525,7 +520,6 @@
 
     // Eventi
     penSelect.addEventListener('change', recalc);
-    clicksInput.addEventListener('input', recalc);
     priceInput.addEventListener('input', recalc);
     targetInput.addEventListener('input', recalc);
 
@@ -537,4 +531,3 @@
   </script>
 </body>
 </html>
-
