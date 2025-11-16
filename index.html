@@ -3,96 +3,395 @@
 <head>
   <meta charset="UTF-8" />
   <title>Calcolatrice penne Wegovy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 0 12px;
-      line-height: 1.5;
+    :root {
+      --bg: #f5f7fb;
+      --card-bg: #ffffff;
+      --border: #d0d7e2;
+      --accent: #2563eb;
+      --accent-soft: rgba(37, 99, 235, 0.08);
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --danger: #b91c1c;
+      --radius-lg: 16px;
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
     }
-    h1, h2 {
-      margin-bottom: 0.4rem;
-    }
-    .card {
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-    label {
-      display: block;
-      margin-top: 8px;
-      font-size: 0.9rem;
-    }
-    input, select {
-      width: 100%;
-      padding: 6px 8px;
-      margin-top: 2px;
+
+    * {
       box-sizing: border-box;
     }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #e0ebff, #f5f7fb);
+      color: var(--text-main);
+    }
+
+    .app {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 4px;
+      font-size: 1.7rem;
+      letter-spacing: 0.02em;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.75rem;
+      margin-bottom: 10px;
+    }
+
+    .tag span {
+      font-size: 0.9rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.5fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 16px 18px 18px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+    }
+
+    .card small {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-bottom: 8px;
+    }
+
+    .warning {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.8rem;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #fef2f2;
+      color: var(--danger);
+      border: 1px solid #fecaca;
+      margin-bottom: 10px;
+    }
+
+    .warning-emoji {
+      font-size: 1.1rem;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
     .row {
       display: flex;
-      gap: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .col {
+      flex: 1 1 180px;
+      min-width: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      padding: 7px 9px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+      outline: none;
+      background: #f9fafb;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    select:focus,
+    input[type="number"]:focus {
+      border-color: var(--accent);
+      background: #ffffff;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+    }
+
+    .helper {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
       flex-wrap: wrap;
     }
-    .col {
-      flex: 1 1 200px;
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
     }
-    .results p {
-      margin: 4px 0;
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.5);
     }
-    .small {
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 5px 14px rgba(37, 99, 235, 0.4);
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--text-muted);
+      box-shadow: none;
+      border: 1px dashed var(--border);
+    }
+
+    button.secondary:hover {
+      background: #f3f4f6;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .results-header span {
       font-size: 0.8rem;
-      color: #666;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f3f4ff;
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
+
+    .grid-results {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 500px) {
+      .grid-results {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat {
+      padding: 8px 9px;
+      border-radius: 12px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .stat-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .results-text p {
+      margin: 4px 0;
+      font-size: 0.85rem;
+    }
+
+    .muted {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 8px;
     }
   </style>
 </head>
 <body>
-  <h1>Calcolatrice penne Wegovy</h1>
-  <p class="small">
-    ⚠️ Strumento per uso professionale. Le istruzioni ufficiali raccomandano di
-    <strong>non impostare la dose contando i click</strong> del selettore.
-  </p>
+  <div class="app">
+    <header>
+      <div class="tag">
+        <span>💉</span>
+        <span>Calcolatrice penne Wegovy – uso professionale</span>
+      </div>
+      <h1>Wegovy – Click, dose settimanale, costo e durata</h1>
+      <p>Stima quantitativa per penne pre-riempite, basata su dose etichetta e contenuto totale.</p>
+    </header>
 
-  <div class="card">
-    <h2>Impostazioni penna</h2>
-    <div class="row">
-      <div class="col">
-        <label for="pen-select">Tipo di penna</label>
-        <select id="pen-select"></select>
-      </div>
-      <div class="col">
-        <label for="clicks-full">Click per dose piena (etichetta)</label>
-        <input id="clicks-full" type="number" min="1" step="1" value="80" />
-      </div>
-      <div class="col">
-        <label for="price">Prezzo penna (€)</label>
-        <input id="price" type="number" min="0" step="0.01" value="200" />
-      </div>
-      <div class="col">
-        <label for="freq">Iniezioni a settimana</label>
-        <input id="freq" type="number" min="0.1" step="0.1" value="1" />
-      </div>
+    <div class="layout">
+      <!-- COLONNA SINISTRA: INPUT -->
+      <section class="card">
+        <h2>Impostazioni</h2>
+        <small>Seleziona la penna, inserisci i click per dose etichetta, il prezzo e la dose settimanale desiderata.</small>
+
+        <div class="warning">
+          <div class="warning-emoji">⚠️</div>
+          <div>
+            Strumento per uso professionale. Le istruzioni ufficiali raccomandano di
+            <strong>non impostare la dose contando i click</strong> del selettore.
+            Questo tool è solo un supporto di calcolo, non una guida per il paziente.
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label for="pen-select">Tipo di penna</label>
+            <select id="pen-select"></select>
+            <div class="helper">Dose etichetta 1 volta/settimana.</div>
+          </div>
+
+          <div class="col">
+            <label for="clicks-full">Click per dose etichetta</label>
+            <input id="clicks-full" type="number" min="1" step="1" value="80" />
+            <div class="helper">Numero di “scatti” per la dose piena indicata sulla penna.</div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top: 8px;">
+          <div class="col">
+            <label for="price">Prezzo penna (€)</label>
+            <input id="price" type="number" min="0" step="0.01" value="200" />
+            <div class="helper">Costo totale di una penna.</div>
+          </div>
+
+          <div class="col">
+            <label for="target-dose">Dose settimanale (mg)</label>
+            <input id="target-dose" type="number" min="0.01" step="0.01" value="0.25" />
+            <div class="helper">Es. 0.25, 0.5, 1.0, 1.7, 2.4…</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="recalc-btn" type="button">
+            🔄 Ricalcola
+          </button>
+          <button id="reset-btn" type="button" class="secondary">
+            ⟲ Reset valori default
+          </button>
+        </div>
+      </section>
+
+      <!-- COLONNA DESTRA: RISULTATI -->
+      <section class="card">
+        <div class="results-header">
+          <div>
+            <h2>Risultati</h2>
+            <span>Stime basate sui dati inseriti.</span>
+          </div>
+          <div class="pill">
+            📅 1 iniezione / settimana
+          </div>
+        </div>
+
+        <div class="grid-results">
+          <div class="stat">
+            <div class="stat-label">Click per dose settimanale</div>
+            <div class="stat-value" id="stat-clicks">–</div>
+            <div class="stat-sub" id="stat-clicks-detail">–</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Durata penna (settimane)</div>
+            <div class="stat-value" id="stat-weeks">–</div>
+            <div class="stat-sub" id="stat-weeks-detail">–</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Costo per settimana</div>
+            <div class="stat-value" id="stat-week-cost">–</div>
+            <div class="stat-sub" id="stat-month-cost">–</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Costo penna</div>
+            <div class="stat-value" id="stat-total-cost">–</div>
+            <div class="stat-sub">Prezzo inserito.</div>
+          </div>
+        </div>
+
+        <div class="results-text">
+          <p id="dose-info"></p>
+          <p id="click-info"></p>
+          <p id="duration-info"></p>
+          <p id="cost-info"></p>
+        </div>
+
+        <div class="muted">
+          Le quantità sono arrotondate e rappresentano stime teoriche sulla base dei dati inseriti
+          (dose etichetta × numero di dosi per penna). Non sostituiscono le indicazioni del RCP
+          né il giudizio clinico.
+        </div>
+      </section>
     </div>
-  </div>
-
-  <div class="card">
-    <h2>Dose desiderata</h2>
-    <div class="row">
-      <div class="col">
-        <label for="target-dose">Dose target (mg)</label>
-        <input id="target-dose" type="number" min="0.01" step="0.01" value="0.25" />
-      </div>
-    </div>
-  </div>
-
-  <div class="card results">
-    <h2>Risultati</h2>
-    <p id="dose-info"></p>
-    <p id="click-info"></p>
-    <p id="duration-info"></p>
-    <p id="cost-info"></p>
   </div>
 
   <script>
@@ -107,25 +406,46 @@
     const penSelect   = document.getElementById('pen-select');
     const clicksInput = document.getElementById('clicks-full');
     const priceInput  = document.getElementById('price');
-    const freqInput   = document.getElementById('freq');
     const targetInput = document.getElementById('target-dose');
 
-    const doseInfo     = document.getElementById('dose-info');
-    const clickInfo    = document.getElementById('click-info');
-    const durationInfo = document.getElementById('duration-info');
-    const costInfo     = document.getElementById('cost-info');
+    const recalcBtn = document.getElementById('recalc-btn');
+    const resetBtn  = document.getElementById('reset-btn');
 
-    // Popola la select
+    const doseInfo      = document.getElementById('dose-info');
+    const clickInfo     = document.getElementById('click-info');
+    const durationInfo  = document.getElementById('duration-info');
+    const costInfo      = document.getElementById('cost-info');
+
+    const statClicks        = document.getElementById('stat-clicks');
+    const statClicksDetail  = document.getElementById('stat-clicks-detail');
+    const statWeeks         = document.getElementById('stat-weeks');
+    const statWeeksDetail   = document.getElementById('stat-weeks-detail');
+    const statWeekCost      = document.getElementById('stat-week-cost');
+    const statMonthCost     = document.getElementById('stat-month-cost');
+    const statTotalCost     = document.getElementById('stat-total-cost');
+
+    // Popola la select delle penne
     pens.forEach(p => {
       const opt = document.createElement('option');
       opt.value = p.id;
-      opt.textContent = `${p.name} (dose etichetta: ${p.labelDoseMg} mg)`;
+      opt.textContent = `${p.name} – ${p.labelDoseMg} mg/settimana`;
       penSelect.appendChild(opt);
     });
 
+    // Imposta default (prima penna)
+    penSelect.value = pens[0].id;
+
     function format(num, decimals = 2) {
-      if (!isFinite(num)) return '-';
+      if (!isFinite(num)) return '–';
       return num.toFixed(decimals);
+    }
+
+    function resetDefaults() {
+      penSelect.value = pens[0].id;
+      clicksInput.value = 80;
+      priceInput.value = 200;
+      targetInput.value = 0.25;
+      recalc();
     }
 
     function recalc() {
@@ -134,21 +454,28 @@
 
       const clicksFull = parseFloat(clicksInput.value);
       const price      = parseFloat(priceInput.value);
-      const freq       = parseFloat(freqInput.value);
       const targetDose = parseFloat(targetInput.value);
 
-      if (!clicksFull || !targetDose || !freq) {
+      if (!clicksFull || !targetDose || targetDose <= 0) {
         doseInfo.textContent     = 'Compila i campi per vedere i risultati.';
         clickInfo.textContent    = '';
         durationInfo.textContent = '';
         costInfo.textContent     = '';
+
+        statClicks.textContent       = '–';
+        statClicksDetail.textContent = 'Inserisci dose e click per etichetta.';
+        statWeeks.textContent        = '–';
+        statWeeksDetail.textContent  = '';
+        statWeekCost.textContent     = '–';
+        statMonthCost.textContent    = '–/mese';
+        statTotalCost.textContent    = '–';
         return;
       }
 
       // mg per click in base alla dose etichetta
       const mgPerClick = pen.labelDoseMg / clicksFull;
 
-      // click per la dose desiderata
+      // click per la dose settimanale desiderata
       const clicksForDose = targetDose / mgPerClick;
       const clicksRounded = Math.round(clicksForDose);
 
@@ -156,40 +483,56 @@
       const totalMgInPen  = pen.labelDoseMg * pen.dosesPerPen;
       const dosesPerPenAtTarget = totalMgInPen / targetDose;
 
-      // durata in settimane
-      const weeks = dosesPerPenAtTarget / freq;
+      // durata in settimane (1 dose = 1 settimana)
+      const weeks = dosesPerPenAtTarget;
 
       // costi
-      const costPerDose   = price / dosesPerPenAtTarget;
-      const costPerWeek   = costPerDose * freq;
-      const costPerMonth  = costPerWeek * 4.345; // settimane medie/mese
+      const costPerWeek  = price / dosesPerPenAtTarget;
+      const costPerMonth = costPerWeek * 4.345; // settimane medie/mese
+      const costTotal    = price;
 
+      // TESTI dettagliati
       doseInfo.textContent =
-        `Penna: ${pen.name} – dose etichetta ${pen.labelDoseMg} mg, ` +
-        `contenuto totale ~ ${format(totalMgInPen, 2)} mg (` +
-        `${pen.dosesPerPen} dosi standard). ` +
-        `A una dose di ${format(targetDose, 2)} mg ottieni ~ ${format(dosesPerPenAtTarget, 2)} dosi per penna.`;
+        `Penna: ${pen.name}. Dose etichetta ${format(pen.labelDoseMg, 2)} mg/settimana, ` +
+        `contenuto totale ≈ ${format(totalMgInPen, 2)} mg (` +
+        `${pen.dosesPerPen} dosi standard alla dose etichetta). ` +
+        `Con una dose settimanale di ${format(targetDose, 2)} mg ottieni ≈ ${format(dosesPerPenAtTarget, 2)} settimane per penna.`;
 
       clickInfo.textContent =
         `Stima: ${format(mgPerClick, 4)} mg per click. ` +
-        `Per ${format(targetDose, 2)} mg servono ~ ${format(clicksForDose, 1)} click ` +
+        `Per ${format(targetDose, 2)} mg/settimana servono ≈ ${format(clicksForDose, 1)} click ` +
         `(arrotondato: ${clicksRounded} click).`;
 
       durationInfo.textContent =
-        `Con ${freq} iniezione/i a settimana la penna dura circa ${format(weeks, 2)} settimane.`;
+        `La penna copre ≈ ${format(weeks, 2)} settimane alla dose selezionata.`;
 
       costInfo.textContent =
-        `Costo per dose ~ €${format(costPerDose)}; ` +
-        `per settimana ~ €${format(costPerWeek)}; per mese ~ €${format(costPerMonth)}.`;
+        `Costo stimato: circa €${format(costPerWeek)} a settimana, ` +
+        `€${format(costPerMonth)} al mese, con un costo penna di €${format(costTotal)}.`;
+
+      // STAT BOX
+      statClicks.textContent = `${clicksRounded} click`;
+      statClicksDetail.textContent = `Calcolati da ${format(clicksForDose, 1)} click teorici (≈${format(mgPerClick, 4)} mg/click).`;
+
+      statWeeks.textContent = `${format(weeks, 1)} sett.`;
+      statWeeksDetail.textContent = `${format(dosesPerPenAtTarget, 2)} dosi/settimana dalla penna.`;
+
+      statWeekCost.textContent = `€${format(costPerWeek)}/sett.`;
+      statMonthCost.textContent = `≈ €${format(costPerMonth)}/mese`;
+
+      statTotalCost.textContent = `€${format(costTotal)}`;
     }
 
+    // Eventi
     penSelect.addEventListener('change', recalc);
     clicksInput.addEventListener('input', recalc);
     priceInput.addEventListener('input', recalc);
-    freqInput.addEventListener('input', recalc);
     targetInput.addEventListener('input', recalc);
 
-    // prima elaborazione
+    recalcBtn.addEventListener('click', recalc);
+    resetBtn.addEventListener('click', resetDefaults);
+
+    // Prima elaborazione
     recalc();
   </script>
 </body>
