@@ -309,7 +309,9 @@
           <div class="col">
             <label for="pen-select">Tipo di penna</label>
             <select id="pen-select"></select>
-            <div class="helper">Dose etichetta 1 volta/settimana. Click dose etichetta fissati a 74.</div>
+            <div class="helper">
+              Dose etichetta 1 volta/settimana. Click per dose etichetta preimpostati per ciascuna penna.
+            </div>
           </div>
         </div>
 
@@ -390,11 +392,12 @@
 
   <script>
     const pens = [
-      { id: 'wegovy-0_25', name: 'Wegovy 0,25 mg', labelDoseMg: 0.25, dosesPerPen: 4 },
-      { id: 'wegovy-0_5',  name: 'Wegovy 0,5 mg',  labelDoseMg: 0.5,  dosesPerPen: 4 },
-      { id: 'wegovy-1',    name: 'Wegovy 1 mg',    labelDoseMg: 1.0,  dosesPerPen: 4 },
-      { id: 'wegovy-1_7',  name: 'Wegovy 1,7 mg',  labelDoseMg: 1.7,  dosesPerPen: 4 },
-      { id: 'wegovy-2_4',  name: 'Wegovy 2,4 mg',  labelDoseMg: 2.4,  dosesPerPen: 4 },
+      // clicksFull = click per dose etichetta
+      { id: 'wegovy-0_25', name: 'Wegovy 0,25 mg', labelDoseMg: 0.25, dosesPerPen: 4, clicksFull: 37 },
+      { id: 'wegovy-0_5',  name: 'Wegovy 0,5 mg',  labelDoseMg: 0.5,  dosesPerPen: 4, clicksFull: 37 },
+      { id: 'wegovy-1',    name: 'Wegovy 1 mg',    labelDoseMg: 1.0,  dosesPerPen: 4, clicksFull: 74 },
+      { id: 'wegovy-1_7',  name: 'Wegovy 1,7 mg',  labelDoseMg: 1.7,  dosesPerPen: 4, clicksFull: 74 },
+      { id: 'wegovy-2_4',  name: 'Wegovy 2,4 mg',  labelDoseMg: 2.4,  dosesPerPen: 4, clicksFull: 74 },
     ];
 
     const penSelect   = document.getElementById('pen-select');
@@ -417,11 +420,11 @@
     const statMonthCost     = document.getElementById('stat-month-cost');
     const statTotalCost     = document.getElementById('stat-total-cost');
 
-    // Popola la select delle penne
+    // Popola la select delle penne, includendo info sui click
     pens.forEach(p => {
       const opt = document.createElement('option');
       opt.value = p.id;
-      opt.textContent = `${p.name} – ${p.labelDoseMg} mg/settimana`;
+      opt.textContent = `${p.name} – ${p.labelDoseMg} mg/settimana – ${p.clicksFull} click/dose etichetta`;
       penSelect.appendChild(opt);
     });
 
@@ -463,8 +466,7 @@
         return;
       }
 
-      // click per dose etichetta fissati a 74
-      const clicksFull = 74;
+      const clicksFull = pen.clicksFull;
 
       // mg per click in base alla dose etichetta
       const mgPerClick = pen.labelDoseMg / clicksFull;
@@ -489,11 +491,11 @@
       doseInfo.textContent =
         `Penna: ${pen.name}. Dose etichetta ${format(pen.labelDoseMg, 2)} mg/settimana, ` +
         `contenuto totale ≈ ${format(totalMgInPen, 2)} mg (` +
-        `${pen.dosesPerPen} dosi standard alla dose etichetta). ` +
+        `${pen.dosesPerPen} dosi standard alla dose etichetta, ${clicksFull} click per dose etichetta). ` +
         `Con una dose settimanale di ${format(targetDose, 2)} mg ottieni ≈ ${format(dosesPerPenAtTarget, 2)} settimane per penna.`;
 
       clickInfo.textContent =
-        `Stima: ${format(mgPerClick, 4)} mg per click (74 click per dose etichetta). ` +
+        `Stima: ${format(mgPerClick, 4)} mg per click (${clicksFull} click per dose etichetta). ` +
         `Per ${format(targetDose, 2)} mg/settimana servono ≈ ${format(clicksForDose, 1)} click ` +
         `(arrotondato: ${clicksRounded} click).`;
 
@@ -507,7 +509,7 @@
       // STAT BOX
       statClicks.textContent = `${clicksRounded} click`;
       statClicksDetail.textContent =
-        `Calcolati da ${format(clicksForDose, 1)} click teorici (≈${format(mgPerClick, 4)} mg/click, 74 click/dose etichetta).`;
+        `Calcolati da ${format(clicksForDose, 1)} click teorici (≈${format(mgPerClick, 4)} mg/click, ${clicksFull} click/dose etichetta).`;
 
       statWeeks.textContent = `${format(weeks, 1)} sett.`;
       statWeeksDetail.textContent = `${format(dosesPerPenAtTarget, 2)} dosi/settimana dalla penna.`;
