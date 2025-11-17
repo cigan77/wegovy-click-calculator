@@ -202,6 +202,13 @@
       color: #9ca3af;
       text-align: center;
     }
+    .dose-big {
+  margin-top: 4px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
   </style>
 </head>
 <body>
@@ -234,19 +241,24 @@
     </div>
 
     <!-- Dose + click sopra lo slider -->
-    <div class="section-label">Dose settimanale desiderata</div>
+<div class="main-numbers">
 
-    <div class="main-numbers">
-      <div class="clicks-display">
-        <span id="clicks-count">0</span> click
-      </div>
-      <div class="clicks-subtext" id="clicks-subtext">
-        Seleziona una dose per vedere il calcolo.
-      </div>
-    </div>
+  <div class="clicks-display">
+    <span id="clicks-count">0</span> click
+  </div>
 
-    <input id="dose-slider" type="range" min="0" max="0.25" step="0.005" value="0" />
-    <div class="dose-value"><span id="dose-value">0.00</span> mg / settimana</div>
+  <div class="dose-big">
+    Dose: <span id="dose-value">0.00</span> mg/settimana
+  </div>
+
+  <div class="clicks-subtext" id="clicks-subtext">
+    Seleziona una dose per vedere il calcolo.
+  </div>
+
+</div>
+
+<input id="dose-slider" type="range" min="0" max="0.25" step="0.005" value="0" />
+
 
     <!-- Statistiche: durata, costo settimanale, costo quotidiano -->
     <div class="stats-grid">
@@ -413,3 +425,4 @@
   </script>
 </body>
 </html>
+
