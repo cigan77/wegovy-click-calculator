@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <title>Wegovy – Click Calculator</title>
+  <title>Wegovy – Calcolatrice click, durata e costi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     * {
@@ -20,24 +20,25 @@
     }
 
     .app {
-      max-width: 480px;
+      max-width: 620px;
       width: 100%;
       background: #ffffff;
       border-radius: 16px;
       padding: 18px 18px 22px;
       box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
-      text-align: center;
     }
 
     h1 {
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       margin: 0 0 4px;
+      text-align: center;
     }
 
     .subtitle {
       font-size: 0.85rem;
       color: #6b7280;
       margin-bottom: 14px;
+      text-align: center;
     }
 
     .warning {
@@ -47,7 +48,6 @@
       border: 1px solid #fecaca;
       border-radius: 10px;
       padding: 6px 8px;
-      text-align: left;
       margin-bottom: 14px;
     }
 
@@ -89,10 +89,32 @@
       font-size: 0.9rem;
     }
 
-    .dose-value {
-      margin-top: 4px;
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .col {
+      flex: 1 1 180px;
+      min-width: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
       font-size: 0.9rem;
-      color: #374151;
+      background: #f9fafb;
     }
 
     input[type="range"] {
@@ -100,9 +122,26 @@
       margin-top: 8px;
     }
 
+    .helper {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    .dose-value {
+      margin-top: 4px;
+      font-size: 0.9rem;
+      color: #374151;
+      text-align: center;
+    }
+
+    .main-numbers {
+      margin-top: 16px;
+      text-align: center;
+    }
+
     .clicks-display {
-      margin-top: 18px;
-      font-size: 1.6rem;
+      font-size: 1.8rem;
       font-weight: 700;
       color: #059669;
     }
@@ -113,31 +152,65 @@
       margin-top: 2px;
     }
 
+    .stats-grid {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat {
+      padding: 8px 9px;
+      border-radius: 12px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      font-size: 0.8rem;
+    }
+
+    .stat-label {
+      color: #6b7280;
+    }
+
+    .stat-value {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 3px;
+    }
+
     .pen-info {
       margin-top: 12px;
       font-size: 0.8rem;
       color: #4b5563;
     }
 
-    .mgclick {
-      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    .details {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: #4b5563;
     }
 
     .footer {
-      margin-top: 14px;
+      margin-top: 12px;
       font-size: 0.7rem;
       color: #9ca3af;
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <h1>What pen do you have?</h1>
-    <div class="subtitle">Seleziona la penna e scegli la dose desiderata.</div>
+    <h1>Wegovy – calcolo click, durata e costi</h1>
+    <div class="subtitle">Seleziona la penna, scegli la dose e inserisci il prezzo della penna.</div>
 
     <div class="warning">
       ⚠️ Strumento per uso professionale. Le istruzioni ufficiali raccomandano di
-      <strong>non impostare la dose contando i click</strong> del selettore.  
+      <strong>non impostare la dose contando i click</strong> del selettore.
       Questo tool è solo un supporto di calcolo, non una guida per il paziente.
     </div>
 
@@ -149,46 +222,88 @@
       <button class="pen-btn pen-24"  data-id="wegovy-2_4">2.4 mg</button>
     </div>
 
-    <div class="section-label">Desired dose:</div>
+    <div class="section-label">Dose settimanale desiderata</div>
     <input id="dose-slider" type="range" min="0" max="0.25" step="0.005" value="0" />
-    <div class="dose-value"><span id="dose-value">0.00</span> mg</div>
+    <div class="dose-value"><span id="dose-value">0.00</span> mg / settimana</div>
 
-    <div class="clicks-display">
-      <span id="clicks-count">0</span> clicks
+    <div class="row">
+      <div class="col">
+        <label for="price">Prezzo penna (€)</label>
+        <input id="price" type="number" min="0" step="0.01" value="200" />
+        <div class="helper">Costo complessivo di una penna.</div>
+      </div>
     </div>
-    <div class="clicks-subtext" id="clicks-subtext">
-      Seleziona una dose per vedere il calcolo.
+
+    <div class="main-numbers">
+      <div class="clicks-display">
+        <span id="clicks-count">0</span> click
+      </div>
+      <div class="clicks-subtext" id="clicks-subtext">
+        Seleziona una dose per vedere il calcolo.
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-label">Durata penna</div>
+        <div class="stat-value" id="stat-weeks">–</div>
+        <div class="stat-label" id="stat-weeks-detail"></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Costo per settimana</div>
+        <div class="stat-value" id="stat-week-cost">–</div>
+        <div class="stat-label" id="stat-month-cost"></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Costo penna</div>
+        <div class="stat-value" id="stat-total-cost">–</div>
+        <div class="stat-label">Prezzo inserito.</div>
+      </div>
     </div>
 
     <div class="pen-info" id="pen-info">
       Penna: 0.25 mg – 37 click per dose etichetta.
     </div>
 
+    <div class="details" id="details-text"></div>
+
     <div class="footer">
-      Calcolo teorico basato su dose etichetta e numero massimo di click della penna.
+      Le quantità sono stime teoriche basate su dose etichetta, contenuto totale della penna e numero massimo di click.
+      Non sostituiscono le indicazioni del RCP né il giudizio clinico.
     </div>
   </div>
 
   <script>
+    // Dati penne: dose etichetta, click per dose etichetta, dosi per penna
     const pens = {
-      'wegovy-0_25': { name: '0.25 mg', labelDoseMg: 0.25, clicksFull: 37 },
-      'wegovy-0_5':  { name: '0.5 mg',  labelDoseMg: 0.5,  clicksFull: 37 },
-      'wegovy-1':    { name: '1 mg',    labelDoseMg: 1.0,  clicksFull: 74 },
-      'wegovy-1_7':  { name: '1.7 mg',  labelDoseMg: 1.7,  clicksFull: 74 },
-      'wegovy-2_4':  { name: '2.4 mg',  labelDoseMg: 2.4,  clicksFull: 74 },
+      'wegovy-0_25': { name: '0.25 mg', labelDoseMg: 0.25, clicksFull: 37, dosesPerPen: 4 },
+      'wegovy-0_5':  { name: '0.5 mg',  labelDoseMg: 0.5,  clicksFull: 37, dosesPerPen: 4 },
+      'wegovy-1':    { name: '1 mg',    labelDoseMg: 1.0,  clicksFull: 74, dosesPerPen: 4 },
+      'wegovy-1_7':  { name: '1.7 mg',  labelDoseMg: 1.7,  clicksFull: 74, dosesPerPen: 4 },
+      'wegovy-2_4':  { name: '2.4 mg',  labelDoseMg: 2.4,  clicksFull: 74, dosesPerPen: 4 },
     };
 
     const penButtons   = document.querySelectorAll('.pen-btn');
     const doseSlider   = document.getElementById('dose-slider');
     const doseValueEl  = document.getElementById('dose-value');
+    const priceInput   = document.getElementById('price');
+
     const clicksCount  = document.getElementById('clicks-count');
     const clicksSub    = document.getElementById('clicks-subtext');
+
+    const statWeeks        = document.getElementById('stat-weeks');
+    const statWeeksDetail  = document.getElementById('stat-weeks-detail');
+    const statWeekCost     = document.getElementById('stat-week-cost');
+    const statMonthCost    = document.getElementById('stat-month-cost');
+    const statTotalCost    = document.getElementById('stat-total-cost');
+
     const penInfoEl    = document.getElementById('pen-info');
+    const detailsText  = document.getElementById('details-text');
 
     let currentPenId = 'wegovy-0_25';
 
     function format(num, decimals = 2) {
-      if (!isFinite(num)) return '0';
+      if (!isFinite(num)) return '–';
       return num.toFixed(decimals);
     }
 
@@ -201,9 +316,8 @@
         btn.classList.toggle('active', btn.dataset.id === penId);
       });
 
-      // aggiorna range della dose: da 0 alla dose etichetta
+      // slider: 0 → dose etichetta
       doseSlider.max = pen.labelDoseMg;
-      // se la dose attuale è > nuova max, riportala a max
       if (parseFloat(doseSlider.value) > pen.labelDoseMg) {
         doseSlider.value = pen.labelDoseMg;
       }
@@ -211,44 +325,79 @@
       penInfoEl.textContent =
         `Penna: ${pen.name} – ${pen.clicksFull} click per dose etichetta.`;
 
-      updateDoseAndClicks();
+      recalc();
     }
 
-    function updateDoseAndClicks() {
+    function recalc() {
       const pen = pens[currentPenId];
       const targetDose = parseFloat(doseSlider.value) || 0;
+      const price = parseFloat(priceInput.value) || 0;
 
       doseValueEl.textContent = format(targetDose, 2);
 
       if (targetDose <= 0) {
         clicksCount.textContent = '0';
         clicksSub.textContent = 'Seleziona una dose per vedere il calcolo.';
+
+        statWeeks.textContent = '–';
+        statWeeksDetail.textContent = '';
+        statWeekCost.textContent = '–';
+        statMonthCost.textContent = '';
+        statTotalCost.textContent = price > 0 ? `€${format(price)}` : '–';
+        detailsText.textContent = '';
         return;
       }
 
-      const mgPerClick = pen.labelDoseMg / pen.clicksFull;
+      const clicksFull = pen.clicksFull;
+      const mgPerClick = pen.labelDoseMg / clicksFull;
       const clicksForDose = targetDose / mgPerClick;
       const clicksRounded = Math.round(clicksForDose);
 
+      // contenuto totale in mg
+      const totalMgInPen = pen.labelDoseMg * pen.dosesPerPen;
+      const dosesPerPenAtTarget = totalMgInPen / targetDose;
+      const weeks = dosesPerPenAtTarget; // 1 dose/settimana
+
+      const costPerWeek  = price > 0 ? price / dosesPerPenAtTarget : NaN;
+      const costPerMonth = costPerWeek * 4.345;
+      const costTotal    = price;
+
+      // click
       clicksCount.textContent = clicksRounded.toString();
       clicksSub.textContent =
         `≈ ${format(clicksForDose, 1)} click teorici (` +
-        `≈ ${format(mgPerClick, 4)} mg/click).`;
+        `${format(mgPerClick, 4)} mg/click).`;
+
+      // durata
+      statWeeks.textContent = `${format(weeks, 1)} sett.`;
+      statWeeksDetail.textContent =
+        `${format(dosesPerPenAtTarget, 2)} dosi/settimana ottenibili dalla penna.`;
+
+      // costi
+      statWeekCost.textContent = isFinite(costPerWeek) ? `€${format(costPerWeek)}/sett.` : '–';
+      statMonthCost.textContent = isFinite(costPerMonth)
+        ? `≈ €${format(costPerMonth)}/mese`
+        : '';
+
+      statTotalCost.textContent = costTotal > 0 ? `€${format(costTotal)}` : '–';
+
+      // testo di dettaglio
+      detailsText.textContent =
+        `Dose etichetta: ${format(pen.labelDoseMg, 2)} mg/settimana (${pen.dosesPerPen} dosi standard, ` +
+        `contenuto totale ≈ ${format(totalMgInPen, 2)} mg). ` +
+        `Alla dose di ${format(targetDose, 2)} mg/settimana la penna copre circa ${format(weeks, 1)} settimane.`;
     }
 
-    // Eventi sui pulsanti penna
+    // Eventi
     penButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        updatePen(btn.dataset.id);
-      });
+      btn.addEventListener('click', () => updatePen(btn.dataset.id));
     });
 
-    // Evento slider
-    doseSlider.addEventListener('input', updateDoseAndClicks);
+    doseSlider.addEventListener('input', recalc);
+    priceInput.addEventListener('input', recalc);
 
     // inizializzazione
     updatePen(currentPenId);
   </script>
 </body>
 </html>
-
