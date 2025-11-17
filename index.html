@@ -56,7 +56,7 @@
       gap: 6px;
       justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .pen-btn {
@@ -83,17 +83,11 @@
     .pen-17  { background: #0ea5e9; }
     .pen-24  { background: #1f2937; }
 
-    .section-label {
-      margin-top: 8px;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-
     .row {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-top: 8px;
+      margin-top: 4px;
     }
 
     .col {
@@ -128,6 +122,13 @@
       margin-top: 2px;
     }
 
+    .section-label {
+      margin-top: 12px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
     .dose-value {
       margin-top: 4px;
       font-size: 0.9rem;
@@ -136,7 +137,7 @@
     }
 
     .main-numbers {
-      margin-top: 16px;
+      margin-top: 10px;
       text-align: center;
     }
 
@@ -206,7 +207,7 @@
 <body>
   <div class="app">
     <h1>Wegovy – calcolo click, durata e costi</h1>
-    <div class="subtitle">Seleziona la penna, scegli la dose e inserisci il prezzo della penna.</div>
+    <div class="subtitle">Seleziona la penna, inserisci il prezzo e scegli la dose settimanale.</div>
 
     <div class="warning">
       ⚠️ Strumento per uso professionale. Le istruzioni ufficiali raccomandano di
@@ -214,6 +215,7 @@
       Questo tool è solo un supporto di calcolo, non una guida per il paziente.
     </div>
 
+    <!-- Pulsanti penne -->
     <div class="pen-buttons">
       <button class="pen-btn pen-025 active" data-id="wegovy-0_25">0.25 mg</button>
       <button class="pen-btn pen-05"  data-id="wegovy-0_5">0.5 mg</button>
@@ -222,17 +224,17 @@
       <button class="pen-btn pen-24"  data-id="wegovy-2_4">2.4 mg</button>
     </div>
 
-    <div class="section-label">Dose settimanale desiderata</div>
-    <input id="dose-slider" type="range" min="0" max="0.25" step="0.005" value="0" />
-    <div class="dose-value"><span id="dose-value">0.00</span> mg / settimana</div>
-
+    <!-- Costo penna sotto i pulsanti -->
     <div class="row">
       <div class="col">
         <label for="price">Prezzo penna (€)</label>
         <input id="price" type="number" min="0" step="0.01" value="200" />
-        <div class="helper">Costo complessivo di una penna.</div>
+        <div class="helper">Inserisci il costo complessivo di una penna.</div>
       </div>
     </div>
+
+    <!-- Dose + click sopra lo slider -->
+    <div class="section-label">Dose settimanale desiderata</div>
 
     <div class="main-numbers">
       <div class="clicks-display">
@@ -243,6 +245,10 @@
       </div>
     </div>
 
+    <input id="dose-slider" type="range" min="0" max="0.25" step="0.005" value="0" />
+    <div class="dose-value"><span id="dose-value">0.00</span> mg / settimana</div>
+
+    <!-- Statistiche: durata, costo settimanale, costo quotidiano -->
     <div class="stats-grid">
       <div class="stat">
         <div class="stat-label">Durata penna</div>
@@ -255,9 +261,9 @@
         <div class="stat-label" id="stat-month-cost"></div>
       </div>
       <div class="stat">
-        <div class="stat-label">Costo penna</div>
-        <div class="stat-value" id="stat-total-cost">–</div>
-        <div class="stat-label">Prezzo inserito.</div>
+        <div class="stat-label">Costo quotidiano</div>
+        <div class="stat-value" id="stat-day-cost">–</div>
+        <div class="stat-label" id="stat-day-detail"></div>
       </div>
     </div>
 
@@ -295,7 +301,8 @@
     const statWeeksDetail  = document.getElementById('stat-weeks-detail');
     const statWeekCost     = document.getElementById('stat-week-cost');
     const statMonthCost    = document.getElementById('stat-month-cost');
-    const statTotalCost    = document.getElementById('stat-total-cost');
+    const statDayCost      = document.getElementById('stat-day-cost');
+    const statDayDetail    = document.getElementById('stat-day-detail');
 
     const penInfoEl    = document.getElementById('pen-info');
     const detailsText  = document.getElementById('details-text');
@@ -343,7 +350,9 @@
         statWeeksDetail.textContent = '';
         statWeekCost.textContent = '–';
         statMonthCost.textContent = '';
-        statTotalCost.textContent = price > 0 ? `€${format(price)}` : '–';
+        statDayCost.textContent = '–';
+        statDayDetail.textContent = '';
+
         detailsText.textContent = '';
         return;
       }
@@ -360,7 +369,7 @@
 
       const costPerWeek  = price > 0 ? price / dosesPerPenAtTarget : NaN;
       const costPerMonth = costPerWeek * 4.345;
-      const costTotal    = price;
+      const costPerDay   = costPerWeek / 7;
 
       // click
       clicksCount.textContent = clicksRounded.toString();
@@ -379,13 +388,16 @@
         ? `≈ €${format(costPerMonth)}/mese`
         : '';
 
-      statTotalCost.textContent = costTotal > 0 ? `€${format(costTotal)}` : '–';
+      statDayCost.textContent = isFinite(costPerDay) ? `€${format(costPerDay)}/giorno` : '–';
+      statDayDetail.textContent = isFinite(costPerWeek)
+        ? `da circa €${format(costPerWeek)}/sett.`
+        : '';
 
       // testo di dettaglio
       detailsText.textContent =
         `Dose etichetta: ${format(pen.labelDoseMg, 2)} mg/settimana (${pen.dosesPerPen} dosi standard, ` +
-        `contenuto totale ≈ ${format(totalMgInPen, 2)} mg). ` +
-        `Alla dose di ${format(targetDose, 2)} mg/settimana la penna copre circa ${format(weeks, 1)} settimane.`;
+        `contenuto totale ≈ ${format(totalMgInPen, 2)} mg). Alla dose di ${format(targetDose, 2)} mg/settimana ` +
+        `la penna copre circa ${format(weeks, 1)} settimane.`;
     }
 
     // Eventi
